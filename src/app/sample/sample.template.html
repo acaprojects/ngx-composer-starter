@@ -1,0 +1,58 @@
+<!--
+@Author: Alex Sorafumo <alex.sorafumo>
+@Date:   12/10/2016 2:02 PM
+@Email:  alex@yuion.net
+@Filename: simple.template.html
+@Last modified by:   Alex Sorafumo
+@Last modified time: 01/02/2017 1:38 PM
+-->
+
+<div class="sample">
+    <div class="header">
+        <div class="logo"></div>
+        <div center class="name">{{data.name}}</div>
+        <div class="clear">
+            <img src="">
+        </div>
+    </div>
+    <div class="contents">
+        <div class="system-input" *ngIf="!system">
+            <div class="title">ACA Angular Starter</div>
+            <input [(ngModel)]="sys" placeholder="System ID">
+            <button class="primary" (click)="system = sys">Use system</button>
+        </div>
+        <div class="system-display" *ngIf="system">
+            <!-- BINDINGS TO THE SYSTEM -->
+            <div binding [(value)]="data.name" [sys]="system" mod="System" bind="name"></div>
+            <div binding [(value)]="data.volume" [sys]="system" mod="Demo" bind="volume" exec=""></div>
+            <div binding [(value)]="data.mute" [sys]="system" mod="Demo" bind="mute" exec=""></div>
+            <div binding [(value)]="data.views" [sys]="system" mod="Demo" bind="views"></div>
+            <div binding [(value)]="data.state" [sys]="system" mod="Demo" bind="state"></div>
+
+            <div binding [(value)]="data.play" [sys]="system" mod="Demo" exec="play"></div>
+            <div binding [(value)]="data.stop" [sys]="system" mod="Demo" exec="stop"></div>
+            <!-- UI TO INTERACT WITH THE SYSTEM -->
+            <div class="system">
+                <div class="controls">
+                    <div class="media-player">
+                        <div center class="status">{{data.state}}</div>
+                        <div class="media-controls">
+                            <div class="play" (tap)="data.state === 'Playing' ? (data.stop = !data.stop): (data.play = !data.play)">
+                                <img [src]="(data.state === 'Playing' ? icon.stop : icon.play) | safeurl">
+                            </div>
+                            <div class="views">{{data.views}} Views</div>
+                        </div>
+                    </div>
+                    <div class="volume">
+                        <div class="mute" (tap)="data.mute = !data.mute">
+                            <img [src]="(data.mute ? icon.mute : icon.unmute) | safeurl">
+                        </div>
+                        <div class="slider">
+                            <slider [(value)]="data.volume"></slider>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

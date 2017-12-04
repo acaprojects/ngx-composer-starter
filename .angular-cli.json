@@ -21,11 +21,17 @@
       "styles": [
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": [
+      ],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
         "prod": "environments/environment.prod.ts"
+      },
+      "stylePreprocessorOptions": {
+        "includePaths": [
+          "app/shared"
+        ]
       }
     }
   ],
@@ -54,7 +60,7 @@
     }
   },
   "defaults": {
-    "styleExt": "css",
+    "styleExt": "scss",
     "component": {}
   }
 }

@@ -1,0 +1,21 @@
+{
+    "version": "0.1.0",
+    "build": "2017-11-30 13:25:27",
+    "env": "dev",
+    "debug": true,
+    "composer": {
+        "domain": "localhost:4200",
+        "route": "/staff",
+        "protocol": "https:",
+        "use_domain": true,
+        "local_login": true
+    },
+    "app": {
+        "name": "ACA Angular Project",
+        "description": "ACA Projects Application made in Angular 5+",
+        "short_name": "ACA",
+        "code": "ACA",
+        "logo_type": "img",
+        "logo": "staff-app-latitude"
+    }
+}

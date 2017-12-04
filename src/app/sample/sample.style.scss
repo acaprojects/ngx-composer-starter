@@ -1,0 +1,131 @@
+// @Author: Alex Sorafumo <alex.sorafumo>
+// @Date:   12/10/2016 2:02 PM
+// @Email:  alex@yuion.net
+// @Filename: simple.style.scss
+// @Last modified by:   Alex Sorafumo
+// @Last modified time: 03/02/2017 1:58 PM
+
+@import 'shared.styles';
+
+.sample {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background-color: rgba(0,0,0,.2);
+}
+
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3em;
+    background-color: #AD1457;
+    box-shadow: 0 .1em .2em .1em rgba(0,0,0,.2);
+}
+
+.name {
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.contents {
+    position: absolute;
+    top: 5em;
+    left: 2em;
+    right: 2em;
+    bottom: 2em;
+    background-color: #fff;
+    border-radius: .2em;
+    box-shadow: 0 .1em .2em .1em rgba(0,0,0,.2);
+}
+
+.system-input {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input {
+    border: 1px solid rgba(0,0,0,.2);
+    height: 2em;
+    border-radius: 1em;
+    margin: .5em;
+    max-width: 95%;
+    width: 12em;
+    width: 18em;
+    padding: .25em 1em;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+.media-player {
+    position: relative;
+    width: 32em;
+    height: 20em;
+    background-color: rgba(0,0,0,.54);
+    margin: 1em;
+    border-radius: .1em;
+    overflow: hidden;
+    .status {
+        color: #fff;
+        font-size: 1.5em;
+        text-transform: uppercase;
+    }
+
+    .media-controls {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 2em;
+        background-color: #B71C1C;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        img {
+            height: 1.5em;
+            width: 1.5em;
+        }
+
+        .play {
+            position: absolute;
+            top: 50%;
+            left: .5em;
+            transform: translateY(-50%);
+        }
+
+        .views {
+            color: #fff;
+            margin: 0 .5em;
+        }
+    }
+
+    @media screen and (max-width: 720px) {
+        font-size: .8em;
+    }
+}
+
+.volume {
+    width: 20em;
+    display: flex;
+    align-items: center;
+    .slider {
+        flex-grow: 1;
+    }
+
+    img {
+        height: 1.5em;
+        width: 1.5em;
+    }
+}
