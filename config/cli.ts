@@ -1,5 +1,5 @@
 
-import { exec } from 'child_process';
+import { spawn } from 'child_process';
 import { Dashboard } from './dashboard';
 
 import * as packager from 'electron-packager';
@@ -21,20 +21,20 @@ gulp.task('ng:build', (next) => {
     const prod = argv.prod !== undefined || argv.production !== undefined;
     const aot = argv.aot !== undefined;
     const worker = argv.worker !== undefined || argv.webworker !== undefined;
-    const cli_process = exec(`ng build${prod ? ' --prod' : ''}${aot ? ' --aot' : ''}`, (err) => {
-        next(err);
-    });
+    const args = ['build'];
+    if (prod) { args.push('--prod'); }
+    if (aot) { args.push('--aot'); }
+    const cli_process = spawn(`ng`, args);
     cli_process.stdout.pipe(process.stdout);
     cli_process.stderr.pipe(process.stderr);
+    cli_process.stdout.on('close', () => { next(); });
 });
 
 gulp.task('ng:serve', (next: any) => {
     const aot = argv.aot !== undefined;
-    const cli_process = exec(`ng serve${aot ? ' --aot' : ''}`, (err, stdout, stderr) => {
-        console.log(stdout);
-        console.log(stderr);
-        next(err);
-    });
+    const args = ['serve'];
+    if (aot) { args.push('--aot'); }
+    const cli_process = spawn(`ng`, args);
     cli_process.stdout.pipe(process.stdout);
     cli_process.stderr.pipe(process.stderr);
     cli_process.stdout.on('close', () => { next(); });
