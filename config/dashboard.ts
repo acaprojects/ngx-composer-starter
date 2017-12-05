@@ -1,16 +1,16 @@
 
 import * as util from 'gulp-util';
 
-let colorMap = {
-    'development': 'bgGreen',
-    'production': 'bgCyan',
-    'dev': 'bgGreen',
-    'prod': 'bgCyan'
+const colorMap = {
+    'development': 'yellow',
+    'production': 'green',
+    'dev': 'yellow',
+    'prod': 'green'
 };
 
 export let Dashboard = {
     show: (env: string) => {
-        let color = colorMap[env] || 'bgMagenta';
+        const color = colorMap[env] || 'magenta';
         console.log(`
           _____                    _____                    _____          
          /\\    \\                  /\\    \\                  /\\    \\         
