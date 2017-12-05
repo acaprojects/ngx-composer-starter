@@ -27,14 +27,16 @@ export class AppService {
     private _sys_obs: any = null;
 
     private prev_route: string[] = [];
+    private model: any = {};
 
     constructor(private _title: Title,
-        private router: Router,
-        private location: Location,
-        private route: ActivatedRoute,
-        private overlay: OverlayService,
-        private settings: SettingsService,
-        private systems: SystemsService) {
+                private router: Router,
+                private location: Location,
+                private route: ActivatedRoute,
+                private overlay: OverlayService,
+                private settings: SettingsService,
+                private systems: SystemsService) {
+        this.init();
     }
 
     get endpoint() {
@@ -74,6 +76,7 @@ export class AppService {
             }, 500);
             return;
         }
+        this.model.title = this.settings.get('app.title') || 'Angular Application';
     }
 
     get Settings() { return this.settings; }
@@ -83,7 +86,7 @@ export class AppService {
     get system() { return this._sys_obs; }
 
     set title(str: string) {
-        this._title.setTitle(`${str} | Latitude Financial Services - Staff App`);
+        this._title.setTitle(`${str ? str + ' | ' : ''}${this.model.title}`);
     }
 
     public navigate(path: string, query?: any, add_base: boolean = true) {

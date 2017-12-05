@@ -11,6 +11,7 @@
         "local_login": true
     },
     "app": {
+        "title": "Angular Application",
         "name": "ACA Angular Project",
         "description": "ACA Projects Application made in Angular 5+",
         "short_name": "ACA",
