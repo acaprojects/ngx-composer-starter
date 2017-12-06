@@ -12,7 +12,6 @@
   },
   "private": true,
   "dependencies": {
-    "@acaproject/ngx-composer": "file:../../Libraries/ngx-composer/dist/acaproject-ngx-composer-0.7.0.tgz",
     "@angular/animations": "^5.0.5",
     "@angular/common": "^5.0.5",
     "@angular/compiler": "^5.0.5",
