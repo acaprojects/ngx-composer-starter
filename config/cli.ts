@@ -13,9 +13,9 @@ const argv = yargs.argv;
 
 Dashboard.show(argv.prod ? 'prod' : 'dev');
 
-gulp.task('build', () => runSequence('ng:build', 'version'));
+gulp.task('build', () => runSequence('prebuild', 'ng:build', 'postbuild'));
 
-gulp.task('serve', () => runSequence('ng:serve'));
+gulp.task('serve', () => runSequence('prebuild', 'ng:serve'));
 
 gulp.task('ng:build', (next) => {
     const prod = argv.prod !== undefined || argv.production !== undefined;

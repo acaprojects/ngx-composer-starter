@@ -36,6 +36,12 @@ gulp.task('clean', () => ((...globs: string[]) => del(globs))('dist/', 'compiled
 
 gulp.task('default', ['build']);
 
+gulp.task('prebuild', () => {
+    return 'Hurray!!!';
+});
+
+gulp.task('postbuild', () => runSequence('version'));
+
 gulp.task('bump', () => {
     const argv = yargs.argv;
     const type = argv.major ? 'major' : (argv.minor ? 'minor' : 'patch');

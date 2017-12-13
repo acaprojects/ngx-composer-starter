@@ -117,7 +117,7 @@ export class AppService {
         this.settings.log(type, msg, args, stream);
     }
 
-    public error(msg: string) {
+    public error(msg: string, action: string) {
         const message = msg ? msg : `Error`;
         this.overlay.notify('success', {
             innerHtml: `
@@ -127,7 +127,7 @@ export class AppService {
         });
     }
 
-    public success(msg: string) {
+    public success(msg: string, action: string) {
         const message = msg ? msg : `Success`;
         this.overlay.notify('success', {
             innerHtml: `
@@ -137,7 +137,7 @@ export class AppService {
         });
     }
 
-    public info(msg: string) {
+    public info(msg: string, action: string) {
         const message = msg ? msg : `Information`;
         this.overlay.notify('info', {
             innerHtml: `

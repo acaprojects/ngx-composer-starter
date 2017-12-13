@@ -23,8 +23,19 @@
     left: 0;
     right: 0;
     height: 3em;
-    background-color: #AD1457;
+    display: flex;
+    align-items: center;
+    background-color: rgb(194, 40, 86);
     box-shadow: 0 .1em .2em .1em rgba(0,0,0,.2);
+}
+
+.logo {
+    margin: .5em;
+    height: 2em;
+    width: 100%;
+    img {
+        height: 100%;
+    }
 }
 
 .name {
@@ -32,6 +43,11 @@
     font-size: 1.5em;
     font-weight: bold;
     text-transform: capitalize;
+}
+
+.title {
+    margin: .5em 0 .25em;
+    font-size: 1.5em;
 }
 
 .contents {

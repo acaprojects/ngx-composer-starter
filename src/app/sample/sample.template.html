@@ -9,17 +9,15 @@
 
 <div class="sample">
     <div class="header">
-        <div class="logo"></div>
+        <div class="logo"><img src="assets/img/logo.svg"></div>
         <div center class="name">{{data.name}}</div>
-        <div class="clear">
-            <img src="">
-        </div>
+        <div class="clear"></div>
     </div>
     <div class="contents">
         <div class="system-input" *ngIf="!system">
             <div class="title">ACA Angular Starter</div>
             <input [(ngModel)]="sys" placeholder="System ID">
-            <button class="primary" (click)="system = sys">Use system</button>
+            <button class="primary" [disabled]="!sys" (click)="system = sys">Use system</button>
         </div>
         <div class="system-display" *ngIf="system">
             <!-- BINDINGS TO THE SYSTEM -->
