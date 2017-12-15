@@ -13,30 +13,37 @@ import { Title } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 
-import { SystemsService } from '@acaprojects/ngx-composer';
+import { SystemsService, CommsService, OAuthService } from '@acaprojects/ngx-composer';
 import { OverlayService } from '@acaprojects/ngx-widgets';
 
 import { SettingsService } from './settings.service';
 import { Utils } from '../shared/utility.class';
+import { SwUpdate } from '@angular/service-worker';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class AppService {
 
     private _system = '';
-    private sys_change: any = null;
-    private _sys_obs: any = null;
+    private subjects: any = {};
+    private observers: any = {};
 
     private prev_route: string[] = [];
     private model: any = {};
 
     constructor(private _title: Title,
-                private router: Router,
-                private location: Location,
-                private route: ActivatedRoute,
-                private overlay: OverlayService,
-                private settings: SettingsService,
-                private systems: SystemsService) {
+        private version: SwUpdate,
+        private router: Router,
+        private location: Location,
+        private route: ActivatedRoute,
+        private overlay: OverlayService,
+        private settings: SettingsService,
+        // private comms: CommsService
+        private systems: SystemsService
+    ) {
         this.init();
+        this.subjects.system = new BehaviorSubject('');
+        this.observers.system = this.subjects.system.asObservable();
     }
 
     get endpoint() {
@@ -53,8 +60,8 @@ export class AppService {
         if (!this._system || this._system === '') {
             if (localStorage) {
                 this._system = localStorage.getItem('ACA.CONTROL.system');
-                if (this.sys_change) {
-                    this.sys_change.next(this._system);
+                if (this.subjects.system) {
+                    this.subjects.system.next(this._system);
                 }
             }
             if (!this._system || this._system === '') {
@@ -63,8 +70,8 @@ export class AppService {
                 this.navigate('');
             }
         } else {
-            if (this.sys_change) {
-                this.sys_change.next(this._system);
+            if (this.subjects.system) {
+                this.subjects.system.next(this._system);
             }
         }
     }
@@ -76,14 +83,55 @@ export class AppService {
             }, 500);
             return;
         }
+        this.version.available.subscribe(event => {
+            this.settings.log('SYSTEM', `Update available: current version is ${event.current} available version is ${event.available}`);
+            this.info('Newer version of the app is available', 'Refresh');
+        });
         this.model.title = this.settings.get('app.title') || 'Angular Application';
+        this.initialiseComposer();
+    }
+
+    public initialiseComposer(tries: number = 0) {
+        this.settings.log('SYSTEM', 'Initialising Composer...');
+            // Get domain information for configuring composer
+        const host = this.settings.get('composer.domain') || location.hostname;
+        const protocol = this.settings.get('composer.protocol') || location.protocol;
+        const port = (protocol.includes('https') ? '443' : '80');
+        const url = `${protocol}//${host}`;
+        const route = this.settings.get('composer.route') || '';
+            // Generate configuration for composer
+        const config: any = {
+            id: 'AcaEngine',
+            scope: 'public',
+            host,
+            protocol,
+            port,
+            oauth_server: `${url}/auth/oauth/authorize`,
+            oauth_tokens: `${url}/auth/token`,
+            redirect_uri: `${location.origin}${route}/oauth-resp.html`,
+            api_endpoint: `${url}/control/`,
+            proactive: true,
+            login_local: this.settings.get('composer.local_login') || false,
+            http: true,
+        };
+            // Enable mock/development environment if the settings is defined
+        const env = this.settings.get('env');
+        console.log('ENV:', env, env.includes('dev'));
+        if (env && env.includes('dev')) {
+            config.port = '3000';
+            config.mock = true;
+            config.http = false;
+        }
+        console.log('Config:', config);
+            // Setup/Initialise composer
+        this.systems.setup(config);
     }
 
     get Settings() { return this.settings; }
-    get Systems() { return this.systems; }
+    // get Systems() { return this.systems; }
     get Overlay() { return this.overlay; }
 
-    get system() { return this._sys_obs; }
+    get system() { return this.observers.system; }
 
     set title(str: string) {
         this._title.setTitle(`${str ? str + ' | ' : ''}${this.model.title}`);
