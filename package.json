@@ -27,7 +27,7 @@
     "zone.js": "^0.8.14"
   },
   "devDependencies": {
-    "@acaprojects/ngx-composer": "^0.7.1",
+    "@acaprojects/ngx-composer": "^0.7.2",
     "@acaprojects/ngx-widgets": "^0.14.0",
     "@angular/cli": "1.6.0",
     "@angular/compiler-cli": "^5.0.0",
