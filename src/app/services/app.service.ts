@@ -50,11 +50,14 @@ export class AppService {
         const host = this.Settings.get('composer.domain');
         const protocol = this.Settings.get('composer.protocol');
         const port = ((protocol === 'https:') ? '443' : '80');
-        const url = `${protocol}//${host}`;
-        const api_endpoint = `${url}`;
-        return api_endpoint;
+        const url = `${protocol || location.protocol}//${host || location.host}`;
+        const endpoint = `${url}`;
+        return endpoint;
     }
 
+    get api_endpoint() {
+        return `${this.endpoint}/${this.api_base}`;
+    }
     public initSystem(sys: string) {
         this._system = sys;
         if (!this._system || this._system === '') {
@@ -134,7 +137,11 @@ export class AppService {
     get system() { return this.observers.system; }
 
     set title(str: string) {
-        this._title.setTitle(`${str ? str + ' | ' : ''}${this.model.title}`);
+        if (!this.model.title) {
+            this.model.title = this.settings.get('app.title') || '';
+        }
+        const title = `${str ? str : ''}${this.model.title ? ' | ' + this.model.title : ''}`;
+        this._title.setTitle(title || this.settings.get('app.title'));
     }
 
     public navigate(path: string, query?: any, add_base: boolean = true) {
