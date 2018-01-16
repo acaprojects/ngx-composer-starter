@@ -26,12 +26,12 @@ import './shared/mock';
     imports: [
         BrowserAnimationsModule,
         BrowserModule,
-        WidgetsModule.forRoot(),
-        ComposerModule.forRoot(),
         RouterModule.forRoot(ROUTES, { useHash: true }),
         HttpClientModule,
         FormsModule,
-        ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
+        ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production }),
+        WidgetsModule.forRoot(),
+        ComposerModule.forRoot()
     ],
     providers: [
         ...SERVICES,

@@ -23,6 +23,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class AppService {
+    private api_base = 'app_api';
 
     private _system = '';
     private subjects: any = {};
@@ -58,6 +59,7 @@ export class AppService {
     get api_endpoint() {
         return `${this.endpoint}/${this.api_base}`;
     }
+
     public initSystem(sys: string) {
         this._system = sys;
         if (!this._system || this._system === '') {
@@ -81,17 +83,15 @@ export class AppService {
 
     public init() {
         if (!this.settings.setup) {
-            setTimeout(() => {
-                this.init();
-            }, 500);
-            return;
+            return setTimeout(() => this.init(), 500);
         }
         this.version.available.subscribe(event => {
-            this.settings.log('SYSTEM', `Update available: current version is ${event.current} available version is ${event.available}`);
+            this.settings.log('CACHE', `Update available: current version is ${event.current.hash} available version is ${event.available.hash}`);
             this.info('Newer version of the app is available', 'Refresh');
         });
         this.model.title = this.settings.get('app.title') || 'Angular Application';
         this.initialiseComposer();
+        setInterval(() => this.checkCache(), 5 * 60 * 1000);
     }
 
     public initialiseComposer(tries: number = 0) {
@@ -204,6 +204,15 @@ export class AppService {
 
     get iOS() {
         return Utils.isMobileSafari();
+    }
+
+    private checkCache() {
+        if (this.version.isEnabled) {
+            this.settings.log('SYSTEM', 'Checking cache for updates');
+            this.version.checkForUpdate()
+                .then(() => this.settings.log('SYSTEM', 'Finished checking cache for updates'))
+                .catch(err => this.settings.log('SYSTEM', err, null, 'error'));
+        }
     }
 
 }
