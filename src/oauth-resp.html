@@ -47,7 +47,7 @@
                     console.log(oauth_data);
                     if(oauth_data){
                         for(var i = 0; i < oauth_data.length; i++) {
-                            let parts = oauth_data[i].split('=');
+                            var parts = oauth_data[i].split('=');
                             if(parts.length > 1){
                                 oauth_resp[parts[0]] = parts[1];
                             }

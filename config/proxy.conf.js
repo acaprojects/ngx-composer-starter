@@ -5,7 +5,7 @@ const PROXY_CONFIG = [
             "/auth",
             "/app_api",
         ],
-        target: "http://localhost:8080",
+        target: "http://localhost:8888",
         secure: false,
         changeOrigin: true
     }
