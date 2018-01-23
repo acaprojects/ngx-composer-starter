@@ -8,7 +8,16 @@ const PROXY_CONFIG = [
         target: "http://localhost:8888",
         secure: false,
         changeOrigin: true
+    },,
+    {
+        context: [
+            "/control/websocket",
+        ],
+        target: "ws://localhost:8888",
+        secure: false,
+        changeOrigin: true,
+        ws: true
     }
-]
+];
 
 module.exports = PROXY_CONFIG;

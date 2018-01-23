@@ -3,7 +3,7 @@ import * as del from 'del';
 import * as gulp from 'gulp';
 import * as bump from 'gulp-bump';
 import * as tsc from 'gulp-typescript';
-import * as jsonModify from 'gulp-json-modify';
+import * as json from 'json-update';
 import * as replace from 'gulp-string-replace';
 import * as merge from 'merge';
 import * as moment from 'moment';
@@ -15,12 +15,23 @@ const tsProject = tsc.createProject('./tsconfig.json');
 const npmconfig = require('../package.json');
 const tscConfig = require('../tsconfig.json');
 const angularConfig = require('../.angular-cli.json');
+const settings = require('../src/assets/settings.json');
 
+const baseHref = '';
 const paths = {
     src: tscConfig.compilerOptions.baseUrl,
     build: tscConfig.compilerOptions.outDir,
     content: 'docs/',
     public: 'dist/',    // packaged assets ready for deploy
+};
+
+const prod_settings = {
+    env: 'prod',
+    composer: {
+        domain: 'demo.aca.im',
+        route: baseHref,
+        protocol: 'https:'
+    }
 };
 
 /**
@@ -38,19 +49,30 @@ gulp.task('clean', () => ((...globs: string[]) => del(globs))('dist/', 'compiled
 
 gulp.task('default', ['build']);
 
-gulp.task('prebuild', () => runSequence('version'));
+gulp.task('prebuild', (next) => runSequence(
+    'sw:base',
+    'settings:update',
+    next
+));
 
-gulp.task('sw-base', () => {
-    return gulp.src(['./dist/main.*.bundle.js']) // Any file globs are supported
-        .pipe(replace(new RegExp('"__base__', 'g'), `"${angularConfig.apps[0].baseHref}`, { logs: { enabled: true } }))
-        .pipe(gulp.dest('./dist'));
+gulp.task('postbuild', (next) => runSequence(
+    'settings:reset',
+    'sw:unbase',
+    'fix:service-worker',
+    next
+));
+
+gulp.task('sw:base', () => {
+    return gulp.src(['./src/app/app.module.ts']) // Any file globs are supported
+        .pipe(replace(new RegExp('\'__base__', 'g'), `'${baseHref}/`, { logs: { enabled: false } }))
+        .pipe(gulp.dest('./src/app'));
 });
 
-gulp.task('postbuild', () => runSequence(
-    'unversion',
-    'sw-base',
-    // 'fix:service-worker'
-));
+gulp.task('sw:unbase', () => {
+    return gulp.src(['./src/app/app.module.ts']) // Any file globs are supported
+        .pipe(replace(new RegExp(`'${baseHref}/`, 'g'), '\'__base__', { logs: { enabled: false } }))
+        .pipe(gulp.dest('./src/app'));
+});
 
 gulp.task('bump', () => {
     const argv = yargs.argv;
@@ -60,40 +82,34 @@ gulp.task('bump', () => {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('version', () => {
-    gulp.src('./src/assets/settings.json')
-        .pipe(jsonModify({
-            key: 'version',
-            value: npmconfig.version,
-        }))
-        .pipe(jsonModify({
-            key: 'build',
-            value: moment().format('YYYY-MM-DD HH:mm:ss'),
-        }))
-        .pipe(gulp.dest('./src/assets'));
+gulp.task('settings:update', () => {
+    const new_settings = {
+        version: npmconfig.version,
+        build: moment().format('YYYY-MM-DD HH:mm:ss')
+    };
+    for (const k in prod_settings) {
+        if (prod_settings.hasOwnProperty(k)) {
+            new_settings[k] = prod_settings[k];
+        }
+    }
+    json.config({ deep: true });
+    return json.update('./src/assets/settings.json', new_settings)
 });
 
-gulp.task('unversion', () => {
-    gulp.src('./src/assets/settings.json')
-        .pipe(jsonModify({
-            key: 'version',
-            value: npmconfig.version,
-        }))
-        .pipe(jsonModify({
-            key: 'build',
-            value: 'local-dev',
-        }))
-        .pipe(gulp.dest('./src/assets'));
+gulp.task('settings:reset', () => {
+    const old_settings = settings;
+    return json.update('./src/assets/settings.json', old_settings);
 });
 
-gulp.task('fix:service-worker', () => runSequence(
-    // 'fix:service-worker:config',
-    'fix:service-worker:runtime'
+gulp.task('fix:service-worker', (next) => runSequence(
+    'fix:service-worker:config',
+    'fix:service-worker:runtime',
+    next
 ));
 
 gulp.task('fix:service-worker:config', () => {
     return gulp.src(['./dist/ngsw.json']) // Any file globs are supported
-        .pipe(replace(new RegExp('"/', 'g'), `"${angularConfig.apps[0].baseHref}/`, { logs: { enabled: false } }))
+        .pipe(replace(new RegExp('"/', 'g'), `"${baseHref}/`, { logs: { enabled: false } }))
         .pipe(gulp.dest('./dist'));
 });
 
