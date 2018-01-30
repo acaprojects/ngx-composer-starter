@@ -26,7 +26,7 @@ const paths = {
 };
 
 const prod_settings = {
-    env: 'prod',
+    env: 'dev',
     composer: {
         domain: 'demo.aca.im',
         route: baseHref,

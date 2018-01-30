@@ -8,7 +8,7 @@ const PROXY_CONFIG = [
         target: "http://localhost:8888",
         secure: false,
         changeOrigin: true
-    },,
+    },
     {
         context: [
             "/control/websocket",
