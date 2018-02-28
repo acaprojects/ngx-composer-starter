@@ -4,6 +4,8 @@ const PROXY_CONFIG = [
             "/control",
             "/auth",
             "/app_api",
+            "/login",
+            "/backoffice"
         ],
         target: "http://localhost:8888",
         secure: false,
