@@ -11,7 +11,7 @@ import { ComposerModule } from '@acaprojects/ngx-composer';
 import { WidgetsModule } from '@acaprojects/ngx-widgets';
 
 import { AppComponent } from './app.component';
-import { SampleComponent } from './sample/sample.component';
+import { APP_COMPONENTS } from './shell';
 import { SERVICES } from './services/index';
 import { ROUTES } from './app.routes';
 import { environment } from '../environments/environment';
@@ -21,7 +21,7 @@ import './shared/mock';
 @NgModule({
     declarations: [
         AppComponent,
-        SampleComponent,
+        ...APP_COMPONENTS,
     ],
     imports: [
         BrowserAnimationsModule,

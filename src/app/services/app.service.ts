@@ -31,6 +31,7 @@ export class AppService {
 
     private prev_route: string[] = [];
     private model: any = {};
+    private timers: any = {};
 
     constructor(private _title: Title,
         private version: SwUpdate,
@@ -45,6 +46,8 @@ export class AppService {
         this.init();
         this.subjects.system = new BehaviorSubject('');
         this.observers.system = this.subjects.system.asObservable();
+        this.subjects.systems = new BehaviorSubject<any[]>([]);
+        this.observers.systems = this.subjects.systems.asObservable();
     }
 
     get endpoint() {
@@ -60,27 +63,6 @@ export class AppService {
         return `${this.endpoint}/${this.api_base}`;
     }
 
-    public initSystem(sys: string) {
-        this._system = sys;
-        if (!this._system || this._system === '') {
-            if (localStorage) {
-                this._system = localStorage.getItem('ACA.CONTROL.system');
-                if (this.subjects.system) {
-                    this.subjects.system.next(this._system);
-                }
-            }
-            if (!this._system || this._system === '') {
-                this.navigate('bootstrap', null, false);
-            } else {
-                this.navigate('');
-            }
-        } else {
-            if (this.subjects.system) {
-                this.subjects.system.next(this._system);
-            }
-        }
-    }
-
     public init() {
         if (!this.settings.setup) {
             return setTimeout(() => this.init(), 500);
@@ -89,8 +71,12 @@ export class AppService {
             this.settings.log('CACHE', `Update available: current version is ${event.current.hash} available version is ${event.available.hash}`);
             this.info('Newer version of the app is available', 'Refresh');
         });
+        this.version.activated.subscribe(event => {
+            console.log('Activated service worker');
+        });
         this.model.title = this.settings.get('app.title') || 'Angular Application';
         this.initialiseComposer();
+        this.loadSystems();
         setInterval(() => this.checkCache(), 5 * 60 * 1000);
     }
 
@@ -106,9 +92,7 @@ export class AppService {
         const config: any = {
             id: 'AcaEngine',
             scope: 'public',
-            host,
-            protocol,
-            port,
+            protocol, host, port,
             oauth_server: `${url}/auth/oauth/authorize`,
             oauth_tokens: `${url}/auth/token`,
             redirect_uri: `${location.origin}${route}/oauth-resp.html`,
@@ -119,22 +103,60 @@ export class AppService {
         };
             // Enable mock/development environment if the settings is defined
         const env = this.settings.get('env');
-        console.log('ENV:', env, env.includes('dev'));
         if (env && env.includes('dev')) {
             config.port = '3000';
             config.mock = true;
             config.http = false;
         }
-        console.log('Config:', config);
             // Setup/Initialise composer
         this.systems.setup(config);
     }
 
-    get Settings() { return this.settings; }
-    // get Systems() { return this.systems; }
-    get Overlay() { return this.overlay; }
+    public initSystem(sys: string) {
+        this._system = sys;
+        if (!this._system || this._system === '') {
+            if (localStorage) {
+                this._system = localStorage.getItem('ACA.CONTROL.system');
+                if (this.subjects.system) {
+                    console.log('Emit System:', sys);
+                    this.subjects.system.next(this._system);
+                }
+            }
+            if (!this._system || this._system === '') {
+                this.navigate('bootstrap');
+            } else {
+                this.navigate('');
+            }
+        } else {
+            if (this.subjects.system) {
+                console.log('Emit System:', sys);
+                this.subjects.system.next(this._system);
+            }
+        }
+    }
 
-    get system() { return this.observers.system; }
+    public listen(name: string, next: (data: any) => void) {
+        if (this.subjects[name]) {
+            return this.observers[name].subscribe(next);
+        }
+        return null;
+    }
+
+    public get(name: string) {
+        if (this.subjects[name]) {
+            return this.subjects[name].getValue();
+        }
+        return null;
+    }
+
+    get Settings() { return this.settings; }
+    get Overlay() { return this.overlay; }
+    get system() { return this.subjects.system.getValue(); }
+    set system(value: string) {
+        console.log('Setting System:', value);
+        this.subjects.system.next(value);
+    }
+
 
     set title(str: string) {
         if (!this.model.title) {
@@ -144,12 +166,8 @@ export class AppService {
         this._title.setTitle(title || this.settings.get('app.title'));
     }
 
-    public navigate(path: string, query?: any, add_base: boolean = true) {
+    public navigate(path: string, query?: any) {
         const path_list = [];
-        if (add_base) {
-            path_list.push('_');
-            path_list.push(this._system);
-        }
         path_list.push(path);
         this.prev_route.push(this.router.url);
         // if (!this.systems.resources.authLoaded) {
@@ -161,7 +179,7 @@ export class AppService {
 
     public back() {
         if (this.prev_route.length > 0) {
-            this.navigate(this.prev_route.pop(), null, false);
+            this.navigate(this.prev_route.pop());
             this.prev_route.pop();
         } else {
             this.navigate('');
@@ -204,6 +222,59 @@ export class AppService {
 
     get iOS() {
         return Utils.isMobileSafari();
+    }
+
+    public getSystem(id: string) {
+        const system_list = this.subjects.systems.getValue();
+        if (system_list) {
+            for (const system of system_list) {
+                if (system.id === id) {
+                    return system;
+                }
+            }
+        }
+        return {};
+    }
+
+    private addSystems(list: any[]) {
+        const system_list = this.subjects.systems.getValue().concat(list);
+        system_list.sort((a, b) => a.name.localeCompare(b.name));
+        this.subjects.systems.next(system_list);
+    }
+
+    private loadSystems(tries: number = 0) {
+        if (this.timers.system) {
+            clearTimeout(this.timers.system);
+            this.timers.system = null;
+        }
+        if (tries > 20) { return; }
+        const systems = this.systems.resources.get('System');
+        if (systems) {
+            tries = 0;
+            systems.get({ offset: '0', limit: 500 }).then((sys_list: any) => {
+                this.subjects.systems.next([]);
+                if (sys_list) {
+                    const count = sys_list.total;
+                    if (count > 500) {
+                        const iter = Math.ceil((count - 500) / 500);
+                        for (let i = 0; i < iter; i++) {
+                            systems.get({ offset: (i + 1) * 500, limit: 500 }).then((list: any) => {
+                                if (list) {
+                                    this.addSystems(list.results);
+                                }
+                            });
+                        }
+                    }
+                    this.addSystems(sys_list.results);
+                } else {
+                    this.timers.system = setTimeout(() => this.loadSystems(tries), 200 * ++tries);
+                }
+            }, (err: any) => {
+                this.timers.system = setTimeout(() => this.loadSystems(tries), 200 * ++tries);
+            });
+        } else {
+            this.timers.system = setTimeout(() => this.loadSystems(tries), 200 * ++tries);
+        }
     }
 
     private checkCache() {

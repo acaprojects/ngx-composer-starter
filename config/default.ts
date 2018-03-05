@@ -98,6 +98,7 @@ gulp.task('settings:update', () => {
 
 gulp.task('settings:reset', () => {
     const old_settings = settings;
+    old_settings.build = 'local-dev';
     return json.update('./src/assets/settings.json', old_settings);
 });
 

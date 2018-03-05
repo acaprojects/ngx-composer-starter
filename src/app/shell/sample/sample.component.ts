@@ -11,7 +11,7 @@ import { CommsService } from '@acaprojects/ngx-composer';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
-import { AppService } from '../services/app.service';
+import { AppService } from '../../services/app.service';
 
 @Component({
     selector: 'sample',
@@ -42,6 +42,7 @@ export class SampleComponent {
         this.route.params.subscribe((params) => {
             if (params.sys_id) {
                 this.system = params.sys_id;
+                this.app_service.system = this.system;
             }
         });
     }
