@@ -13,6 +13,7 @@
 
 * {
     user-select: none;
+    font-family: $font-stack;
 }
 
 textarea,
@@ -148,7 +149,7 @@ button {
     position: relative;
     font-size: 1em;
     padding: .1em 1em 0;
-    background-color: #e3e3e3;
+    background-color: #f0f0f0;
     border-radius: .1em;
     color: $color1;
     margin: .2em .25em;
@@ -171,7 +172,7 @@ button {
         box-shadow: 0 .1em .2em .1em rgba(#000, .1);
         &:hover {
             color: $color1;
-            background-color: #e3e3e3;
+            background-color: #f0f0f0;
         }
     }
 
