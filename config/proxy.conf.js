@@ -3,7 +3,9 @@ const PROXY_CONFIG = [
         context: [
             "/control",
             "/auth",
-            "/app_api",
+            "/api",
+            "/styles",
+            "/scripts",
             "/login",
             "/backoffice"
         ],

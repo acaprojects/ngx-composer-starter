@@ -116,7 +116,7 @@ input {
         }
     }
 
-    @media screen and (max-width: 720px) {
+    @include respond-to(mobile) {
         font-size: .8em;
     }
 }

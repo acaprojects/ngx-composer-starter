@@ -332,32 +332,6 @@ button {
     }
 }
 
-@media screen and (min-width: 720px) {
-    .mobile-only {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 1024px) {
-    html, body, .app {
-        font-size: 3.0vmin;
-    }
-}
-
-@media screen and (max-width: 720px) {
-    html, body, .app {
-        font-size: 4.0vmin;
-    }
-
-    .desktop-only {
-        display: none;
-    }
-
-    .tooltip {
-        display: none;
-    }
-}
-
 .modal[widget].filters {
     .body {
         border-radius: 1.2rem;
