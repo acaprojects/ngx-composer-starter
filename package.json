@@ -28,7 +28,7 @@
   },
   "devDependencies": {
     "@acaprojects/ngx-composer": "^0.8.10",
-    "@acaprojects/ngx-widgets": "^0.14.16",
+    "@acaprojects/ngx-widgets": "^0.14.18",
     "@angular/cli": "^1.7.3",
     "@angular/compiler-cli": "^5.2.9",
     "@angular/language-service": "^5.2.9",

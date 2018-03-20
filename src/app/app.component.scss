@@ -359,6 +359,14 @@ button {
     }
 }
 
+.notifications[widget] {
+    .details > div {
+        display: flex;
+        align-items: center;
+        font-size: .8em;
+    }
+}
+
 div.dropdown[widget] {
     max-width: 100%;
     font-size: 1.2em;

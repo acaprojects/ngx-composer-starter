@@ -41,7 +41,7 @@
                             <img [src]="(data.mute ? icon.mute : icon.unmute) | safeurl">
                         </div>
                         <div class="slider">
-                            <slider [(value)]="data.volume"></slider>
+                            <slider [(model)]="data.volume"></slider>
                         </div>
                     </div>
                 </div>
