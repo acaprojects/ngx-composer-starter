@@ -43,6 +43,7 @@ export class AppService {
         // private comms: CommsService
         private systems: SystemsService
     ) {
+        this.overlay.registerService(this);
         this.init();
         this.subjects.system = new BehaviorSubject('');
         this.observers.system = this.subjects.system.asObservable();

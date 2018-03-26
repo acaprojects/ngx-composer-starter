@@ -22,7 +22,8 @@
             "updateMode": "prefetch",
             "resources": {
                 "files": [
-                    "/assets/**"
+                    "/assets/**",
+                    "!/assets/settings.json"
                 ]
             }
         },
@@ -38,9 +39,22 @@
     ],
     "dataGroups": [
         {
+            "name": "settings",
+            "urls": [
+                "/assets/settings.json"
+            ],
+            "cacheConfig": {
+                "strategy": "freshness",
+                "maxSize": 10,
+                "maxAge": "3h",
+                "timeout": "10s"
+            }
+        },
+        {
             "name": "control-api",
             "urls": [
-                "/control"
+                "/control",
+                "/api"
             ],
             "cacheConfig": {
                 "strategy": "freshness",

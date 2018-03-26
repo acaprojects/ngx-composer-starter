@@ -117,7 +117,7 @@ gulp.task('fix:service-worker:config', () => {
 gulp.task('fix:service-worker:runtime', () => {
     const parts = npmconfig.name.split('-');
     return gulp.src(['./dist/ngsw-worker.js']) // Any file globs are supported
-        .pipe(replace(new RegExp('ngsw:db:', 'g'), `ngsw:db:${parts.length > 1 ? parts[1] : parts[0]}:`, { logs: { enabled: false } }))
+        .pipe(replace(new RegExp('ngsw:', 'g'), `ngsw:${parts.length > 1 ? parts[1] : parts[0]}:`, { logs: { enabled: false } }))
         .pipe(gulp.dest('./dist'));
 });
 
