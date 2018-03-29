@@ -194,7 +194,7 @@ export class AppService {
     public error(msg: string, action?: string, event?: () => void) {
         const message = msg ? msg : `Error`;
         this.overlay.notify('success', {
-            html: `<div class="display-icon error" style="font-size:2.0em"></div><div>${message}</div>`,
+            html: `<div class="display-icon error" style="font-size:2.0em"></div><div class="msg">${message}</div>`,
             name: 'ntfy error',
             action
         });
@@ -203,7 +203,7 @@ export class AppService {
     public success(msg: string, action?: string, event?: () => void) {
         const message = msg ? msg : `Success`;
         this.overlay.notify('success', {
-            html: `<div class="display-icon success" style="font-size:2.0em"></div><div>${message}</div>`,
+            html: `<div class="display-icon success" style="font-size:2.0em"></div><div class="msg">${message}</div>`,
             name: 'ntfy success',
             action
         }, event);
@@ -212,7 +212,7 @@ export class AppService {
     public info(msg: string, action?: string, event?: () => void) {
         const message = msg ? msg : `Information`;
         this.overlay.notify('info', {
-            html: `<div class="display-icon info" style="font-size:2.0em"></div></div><div>${message}</div>`,
+            html: `<div class="display-icon info" style="font-size:2.0em"></div></div><div class="msg">${message}</div>`,
             name: 'ntfy info',
             action
         }, event);
