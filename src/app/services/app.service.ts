@@ -70,7 +70,9 @@ export class AppService {
         }
         this.version.available.subscribe(event => {
             this.settings.log('CACHE', `Update available: current version is ${event.current.hash} available version is ${event.available.hash}`);
-            this.info('Newer version of the app is available', 'Refresh');
+            this.info('Newer version of the app is available', 'Refresh', () => {
+                location.reload();
+            });
         });
         this.version.activated.subscribe(event => {
             console.log('Activated service worker');
