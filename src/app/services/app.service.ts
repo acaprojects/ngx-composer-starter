@@ -86,8 +86,8 @@ export class AppService {
             // Get domain information for configuring composer
         const host = this.settings.get('composer.domain') || location.hostname;
         const protocol = this.settings.get('composer.protocol') || location.protocol;
-        const port = (protocol.includes('https') ? '443' : '80');
-        const url = `${protocol}//${host}`;
+        const port = (protocol.indexOf('https') >= 0 ? '443' : '80');
+        const url = this.settings.get('composer.use_domain') ? `${protocol}//${host}` : location.origin;
         const route = this.settings.get('composer.route') || '';
             // Generate configuration for composer
         const config: any = {
