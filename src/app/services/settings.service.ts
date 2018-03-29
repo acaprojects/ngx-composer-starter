@@ -116,7 +116,7 @@ export class SettingsService {
                             }
                         }
                         const win = window as any;
-                        if (win.debug && win.debug_module.includes(this.model.app.name)) {
+                        if (win.debug && win.debug_module.indexOf(this.model.app.name) >= 0) {
                             this.log('Settings', `Loaded settings for application`);
                         }
                     }, (err) => { reject(err); },
