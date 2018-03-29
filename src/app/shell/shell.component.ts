@@ -16,7 +16,7 @@ import * as moment from 'moment';
 @Component({
     selector: 'app-shell',
     styleUrls: ['./shell.styles.scss'],
-    templateUrl: './shell.template.html',
+    templateUrl: './shell.template.html'
 })
 export class AppShellComponent implements OnInit {
 

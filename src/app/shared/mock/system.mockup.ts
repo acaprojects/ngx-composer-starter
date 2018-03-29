@@ -57,6 +57,6 @@ setInterval(() => {
         module.state = 'Idle';
     }
     module.views += Math.floor(Math.random() * 7);
-}, 10 * 1000);
+}, 3 * 1000);
 
 win.systemData['sys-B0'] = win.control.systems['sys-B0'];

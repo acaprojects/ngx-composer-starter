@@ -13,7 +13,7 @@ import { environment } from '../environments/environment';
     </div>
     `,
     styleUrls: ['./app.component.scss'],
-    encapsulation: ViewEncapsulation.None,
+    encapsulation: ViewEncapsulation.None
 })
 export class AppComponent {
     constructor(private view: ViewContainerRef, private overlay: OverlayService) {

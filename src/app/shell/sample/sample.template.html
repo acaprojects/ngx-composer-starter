@@ -16,14 +16,16 @@
         </div>
         <div class="system-display" *ngIf="system">
             <!-- BINDINGS TO THE SYSTEM -->
-            <div binding [(value)]="data.name" [sys]="system" mod="System" bind="name"></div>
-            <div binding [(value)]="data.volume" [sys]="system" mod="Demo" bind="volume" exec=""></div>
-            <div binding [(value)]="data.mute" [sys]="system" mod="Demo" bind="mute" exec=""></div>
-            <div binding [(value)]="data.views" [sys]="system" mod="Demo" bind="views"></div>
-            <div binding [(value)]="data.state" [sys]="system" mod="Demo" bind="state"></div>
+            <div class="bindings">
+                <div binding [(value)]="data.name" [sys]="system" mod="System" bind="name"></div>
+                <div binding [(value)]="data.volume" [sys]="system" mod="Demo" bind="volume" exec=""></div>
+                <div binding [(value)]="data.mute" [sys]="system" mod="Demo" bind="mute" exec=""></div>
+                <div binding [(value)]="data.views" [sys]="system" mod="Demo" bind="views"></div>
+                <div binding [(value)]="data.state" [sys]="system" mod="Demo" bind="state"></div>
 
-            <div binding [(value)]="data.play" [sys]="system" mod="Demo" exec="play"></div>
-            <div binding [(value)]="data.stop" [sys]="system" mod="Demo" exec="stop"></div>
+                <div binding [(value)]="data.play" [sys]="system" mod="Demo" exec="play"></div>
+                <div binding [(value)]="data.stop" [sys]="system" mod="Demo" exec="stop"></div>
+            </div>
             <!-- UI TO INTERACT WITH THE SYSTEM -->
             <div class="system">
                 <div class="controls">
