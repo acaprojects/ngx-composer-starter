@@ -103,9 +103,8 @@ export class AppService {
             http: true,
         };
             // Enable mock/development environment if the settings is defined
-        const env = this.settings.get('env');
-        if (env && env.includes('dev')) {
-            config.port = '3000';
+        const mock = this.settings.get('mock');
+        if (mock) {
             config.mock = true;
             config.http = false;
         }

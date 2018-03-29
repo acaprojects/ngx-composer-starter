@@ -18,5 +18,6 @@
         "code": "ACA",
         "logo_type": "img",
         "logo": "assets/img/logo.svg"
-    }
+    },
+    "mock": false
 }

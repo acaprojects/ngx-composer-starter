@@ -17,9 +17,9 @@ const ngargs =
 
 Dashboard.show(argv.prod ? 'prod' : 'dev');
 
-gulp.task('build', (next) => runSequence('prebuild', 'ng:build', 'postbuild', next));
+gulp.task('build', (next) => runSequence('pre-build', 'ng:build', 'post-build', next));
 
-gulp.task('serve', (next) => runSequence('ng:serve', next));
+gulp.task('serve', (next) => runSequence('pre-serve', 'ng:serve', next));
 
 gulp.task('ng:build', () => ng('build', ...ngargs));
 

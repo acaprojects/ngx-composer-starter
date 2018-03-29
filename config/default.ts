@@ -26,12 +26,12 @@ const paths = {
 };
 
 const prod_settings = {
-    env: 'dev',
     composer: {
         domain: 'demo.aca.im',
         route: baseHref,
         protocol: 'https:'
-    }
+    },
+    mock: false
 };
 
 /**
@@ -49,13 +49,18 @@ gulp.task('clean', () => ((...globs: string[]) => del(globs))('dist/', 'compiled
 
 gulp.task('default', ['build']);
 
-gulp.task('prebuild', (next) => runSequence(
+gulp.task('pre-build', (next) => runSequence(
     'sw:base',
     'settings:update',
     next
 ));
 
-gulp.task('postbuild', (next) => runSequence(
+gulp.task('pre-serve', (next) => runSequence(
+    'check:flags',
+    next
+));
+
+gulp.task('post-build', (next) => runSequence(
     'settings:reset',
     'sw:unbase',
     'fix:service-worker',
@@ -63,13 +68,13 @@ gulp.task('postbuild', (next) => runSequence(
 ));
 
 gulp.task('sw:base', () => {
-    return gulp.src(['./src/app/app.module.ts']) // Any file globs are supported
+    return gulp.src(['./src/app/app.module.ts', './src/app/app.component.ts']) // Any file globs are supported
         .pipe(replace(new RegExp('\'__base__', 'g'), `'${baseHref}/`, { logs: { enabled: false } }))
         .pipe(gulp.dest('./src/app'));
 });
 
 gulp.task('sw:unbase', () => {
-    return gulp.src(['./src/app/app.module.ts']) // Any file globs are supported
+    return gulp.src(['./src/app/app.module.ts', './src/app/app.component.ts']) // Any file globs are supported
         .pipe(replace(new RegExp(`'${baseHref}/`, 'g'), '\'__base__', { logs: { enabled: false } }))
         .pipe(gulp.dest('./src/app'));
 });
@@ -82,8 +87,16 @@ gulp.task('bump', () => {
         .pipe(gulp.dest('./'));
 });
 
+gulp.task('check:flags', () => {
+    const argv = yargs.argv;
+    const mock = !!argv.mock;
+    json.config({ deep: true });
+    return json.update('./src/assets/settings.json', { mock });
+});
+
 gulp.task('settings:update', () => {
-    const new_settings = {
+    const argv = yargs.argv;
+    const new_settings: any = {
         version: npmconfig.version,
         build: moment().format('YYYY-MM-DD HH:mm:ss')
     };
@@ -92,13 +105,19 @@ gulp.task('settings:update', () => {
             new_settings[k] = prod_settings[k];
         }
     }
+    const mock = !!argv.mock;
+    new_settings.mock = mock;
+    const env = !!argv.prod ? 'prod' : 'dev';
+    new_settings.env = env;
     json.config({ deep: true });
-    return json.update('./src/assets/settings.json', new_settings)
+    return json.update('./src/assets/settings.json', new_settings);
 });
 
 gulp.task('settings:reset', () => {
     const old_settings = settings;
     old_settings.build = 'local-dev';
+    old_settings.env = 'dev';
+    old_settings.mock = false;
     return json.update('./src/assets/settings.json', old_settings);
 });
 
