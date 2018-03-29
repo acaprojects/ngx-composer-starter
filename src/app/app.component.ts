@@ -20,7 +20,7 @@ export class AppComponent {
         this.overlay.view = view;
         if (environment.production && 'serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistration()
-                .then(active => !active && navigator.serviceWorker.register('./ngsw-worker.js'))
+                .then(active => !active && navigator.serviceWorker.register('__base__ngsw-worker.js'))
                 .catch(console.error);
         }
     }

@@ -24,12 +24,7 @@
                 "files": [
                     "/assets/**",
                     "!/assets/settings.json"
-                ]
-            }
-        },
-        {
-            "name": "fonts",
-            "resources": {
+                ],
                 "urls": [
                     "https://fonts.googleapis.com/**",
                     "https://fonts.gstatic.com/**"
