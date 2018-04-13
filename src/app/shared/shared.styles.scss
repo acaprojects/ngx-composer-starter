@@ -58,7 +58,7 @@ $break-landscape-tablet: 1048px;
         @media only screen and (orientation: landscape) and (min-width: $break-landscape-mobile + 1) and (max-width: $break-landscape-tablet) {
             @content;
         }
-    } @else if $media == tablet-mobile {
+    } @else if ($media == tablet-mobile or $media == not-desktop) {
         @media only screen and (orientation: portrait) and (max-width: $break-tablet) {
             @content;
         }
