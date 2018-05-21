@@ -14,7 +14,7 @@ const tsProject = tsc.createProject('./tsconfig.json');
 
 const npmconfig = require('../package.json');
 const tscConfig = require('../tsconfig.json');
-const angularConfig = require('../.angular-cli.json');
+const angularConfig = require('../angular.json');
 const settings = require('../src/assets/settings.json');
 
 const baseHref = '';

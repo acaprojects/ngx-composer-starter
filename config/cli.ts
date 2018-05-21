@@ -10,10 +10,10 @@ import * as yargs from 'yargs';
 
 const argv = yargs.argv;
 
-const ngargs =
-  [ argv.prod ? '--prod' : ''
-  , argv.aot  ? '--aot'  : ''
-  ];
+const ngargs = [
+    argv.prod ? '--prod' : '',
+    argv.aot  ? '--aot'  : ''
+];
 
 Dashboard.show(argv.prod ? 'prod' : 'dev');
 
@@ -21,9 +21,9 @@ gulp.task('build', (next) => runSequence('pre-build', 'ng:build', 'post-build', 
 
 gulp.task('serve', (next) => runSequence('pre-serve', 'ng:serve', next));
 
-gulp.task('ng:build', () => ng('build', ...ngargs));
+gulp.task('ng:build', (next) => ng('build', ...ngargs));
 
-gulp.task('ng:serve', () => ng('serve', ...ngargs));
+gulp.task('ng:serve', (next) => ng('serve', ...ngargs));
 
 gulp.task('package', (next) => runSequence('build', 'install', 'package-app', next));
 
