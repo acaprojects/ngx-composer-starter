@@ -3,12 +3,12 @@ import * as del from 'del';
 import * as gulp from 'gulp';
 import * as bump from 'gulp-bump';
 import * as tsc from 'gulp-typescript';
-import * as json from 'json-update';
 import * as replace from 'gulp-string-replace';
 import * as merge from 'merge';
 import * as moment from 'moment';
 import * as runSequence from 'run-sequence';
 import * as yargs from 'yargs';
+import * as fs from 'fs-extra';
 
 const tsProject = tsc.createProject('./tsconfig.json');
 
@@ -17,7 +17,7 @@ const tscConfig = require('../tsconfig.json');
 const angularConfig = require('../angular.json');
 const settings = require('../src/assets/settings.json');
 
-const baseHref = '';
+const baseHref = '/staff';
 const paths = {
     src: tscConfig.compilerOptions.baseUrl,
     build: tscConfig.compilerOptions.outDir,
@@ -27,11 +27,25 @@ const paths = {
 
 const prod_settings = {
     composer: {
-        domain: 'demo.aca.im',
+        domain: '',
         route: baseHref,
         protocol: 'https:'
     },
     mock: false
+};
+
+const mergeJSON = (a, b) => {
+    for (const f in b) {
+        if (b.hasOwnProperty(f)) {
+            if (!a[f]) {
+                a[f] = b[f];
+            } else if (typeof b[f] === 'object' && typeof a[f] === 'object') {
+                mergeJSON(a[f], b[f]);
+            } else {
+                a[f] = b[f];
+            }
+        }
+    }
 };
 
 /**
@@ -87,38 +101,33 @@ gulp.task('bump', () => {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('check:flags', () => {
+gulp.task('check:flags', (next) => {
     const argv = yargs.argv;
-    const mock = !!argv.mock;
-    json.config({ deep: true });
-    return json.update('./src/assets/settings.json', { mock });
+    const s = JSON.parse(JSON.stringify(settings));
+    s.mock = !!argv.mock;
+    fs.outputJson('./src/assets/settings.json', s, { spaces: 4 })
+        .then(() => next());
 });
 
-gulp.task('settings:update', () => {
+gulp.task('settings:update', (next) => {
     const argv = yargs.argv;
-    const new_settings: any = {
-        version: npmconfig.version,
-        build: moment().format('YYYY-MM-DD HH:mm:ss')
-    };
-    for (const k in prod_settings) {
-        if (prod_settings.hasOwnProperty(k)) {
-            new_settings[k] = prod_settings[k];
-        }
-    }
-    const mock = !!argv.mock;
-    new_settings.mock = mock;
-    const env = !!argv.prod ? 'prod' : 'dev';
-    new_settings.env = env;
-    json.config({ deep: true });
-    return json.update('./src/assets/settings.json', new_settings);
+    const s = JSON.parse(JSON.stringify(settings));
+    s.version = npmconfig.version;
+    s.build = moment().valueOf();
+    mergeJSON(s, prod_settings);
+    s.mock = !!argv.mock;
+    s.env = !!argv.prod ? 'prod' : 'dev';
+    fs.outputJson('./src/assets/settings.json', s, { spaces: 4 })
+        .then(() => next());
 });
 
-gulp.task('settings:reset', () => {
-    const old_settings = settings;
-    old_settings.build = 'local-dev';
-    old_settings.env = 'dev';
-    old_settings.mock = false;
-    return json.update('./src/assets/settings.json', old_settings);
+gulp.task('settings:reset', (next) => {
+    const s = JSON.parse(JSON.stringify(settings));
+    s.build = 'local-dev';
+    s.env = 'dev';
+    s.mock = false;
+    fs.outputJson('./src/assets/settings.json', s, { spaces: 4 })
+        .then(() => next());
 });
 
 gulp.task('fix:service-worker', (next) => runSequence(
