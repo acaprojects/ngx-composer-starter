@@ -2,28 +2,16 @@
 import * as del from 'del';
 import * as gulp from 'gulp';
 import * as bump from 'gulp-bump';
-import * as tsc from 'gulp-typescript';
 import * as replace from 'gulp-string-replace';
-import * as merge from 'merge';
 import * as moment from 'moment';
 import * as runSequence from 'run-sequence';
 import * as yargs from 'yargs';
 import * as fs from 'fs-extra';
 
-const tsProject = tsc.createProject('./tsconfig.json');
-
 const npmconfig = require('../package.json');
-const tscConfig = require('../tsconfig.json');
-const angularConfig = require('../angular.json');
 const settings = require('../src/assets/settings.json');
 
 const baseHref = '/staff';
-const paths = {
-    src: tscConfig.compilerOptions.baseUrl,
-    build: tscConfig.compilerOptions.outDir,
-    content: 'docs/',
-    public: 'dist/',    // packaged assets ready for deploy
-};
 
 const prod_settings = {
     composer: {
@@ -49,14 +37,6 @@ const mergeJSON = (a, b) => {
 };
 
 /**
- * Pipe a collection of streams to and arbitrart destination and merge the
- * results.
- */
-const pipeTo = (dest: NodeJS.ReadWriteStream) =>
-    (...src: NodeJS.ReadableStream[]) =>
-        merge(src.map((s) => s.pipe(dest)));
-
-/**
  * Nuke old build assetts.
  */
 gulp.task('clean', () => ((...globs: string[]) => del(globs))('dist/', 'compiled/', '_package'));
@@ -75,11 +55,31 @@ gulp.task('pre-serve', (next) => runSequence(
 ));
 
 gulp.task('post-build', (next) => runSequence(
+    'build:manifest',
     'settings:reset',
     'sw:unbase',
     'fix:service-worker',
     next
 ));
+
+gulp.task('build:manifest', (next) => {
+    const app = settings.app || {};
+    const manifest: any = {
+        short_name: app.short_name || 'ACA Staff Application',
+        name: app.name || 'ACA Staff Application',
+        icons: [
+            {
+                src: 'assets/icon/launch.png',
+                sizes: '196x196',
+                type: 'png'
+            }
+        ],
+        start_url: 'index.html',
+        display: 'standalone'
+    };
+    fs.outputJson('./dist/manifest.json', manifest, { spaces: 4 })
+        .then(() => next());
+});
 
 gulp.task('sw:base', () => {
     return gulp.src(['./src/app/app.module.ts', './src/app/app.component.ts']) // Any file globs are supported
@@ -113,7 +113,7 @@ gulp.task('settings:update', (next) => {
     const argv = yargs.argv;
     const s = JSON.parse(JSON.stringify(settings));
     s.version = npmconfig.version;
-    s.build = moment().valueOf();
+    s.build = moment().seconds(0).milliseconds(0).valueOf();
     mergeJSON(s, prod_settings);
     s.mock = !!argv.mock;
     s.env = !!argv.prod ? 'prod' : 'dev';
@@ -138,7 +138,8 @@ gulp.task('fix:service-worker', (next) => runSequence(
 
 gulp.task('fix:service-worker:config', () => {
     return gulp.src(['./dist/ngsw.json']) // Any file globs are supported
-        .pipe(replace(new RegExp('"/', 'g'), `"${baseHref}/`, { logs: { enabled: false } }))
+    .pipe(replace(new RegExp('"/', 'g'), `"${baseHref}/`, { logs: { enabled: false } }))
+    .pipe(replace(/"\\\\\/assets\\\\\//g, `"\\\\${baseHref}\\\\/assets\\\\/`, { logs: { enabled: true } }))
         .pipe(gulp.dest('./dist'));
 });
 

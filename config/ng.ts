@@ -2,7 +2,6 @@ import { spawn } from 'child_process';
 
 const proc = (cmd, args) =>
     new Promise((resolve, reject) => {
-        console.log('SPAWN', cmd, ...args);
         const p = spawn(cmd, args);
         p.stdout.pipe(process.stdout);
         p.stderr.pipe(process.stderr);
