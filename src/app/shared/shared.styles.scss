@@ -2,29 +2,37 @@
 || Shared Global SASS Variables ||
 \*==============================*/
 
-$primary-color: #009688;
 $success: #309b40;
+$success-alt: #4285f4;
 $error: #db291d;
 $pending: #FF9800;
 $neutral: #797979;
 
-$bg: #151922;
-$bg-light: #3c424c;
-$bg-lighter: #525964;
+$background: #f0f0f0;
 
-$color-primary: #E91E63;
-$color-secondary: #f9b701;
-$color-ternary: #309b40;
-$color-quaternary: #db291d;
+$header-height: 4em;
+$header-bg: #fff;
+$header-color: rgba(#000, .87);
+
+$color-primary: #d9005a;
+$color-secondary: #40485a;
+$color-ternary: #c79961;
+$color-quaternary: #7dd6d6;
 $color-quinternary: #4c5c6c;
 $color-sexternary: #7fe43b;
 
-$color-white: #ffffff;
-$color-gray: #f2f2f2;
-$color-orange: #e96e20;
-$color-green: #80CBC4;
+/*====================*\
+||   Font Variables   ||
+\*====================*/
+
+$base-size: 2.5vmin;
+$tablet-size: 3vmin;
+$mobile-size: 4vmin;
 
 $font-stack: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
+
+$heading-font: $font-stack;
+$main-font: $font-stack;
 
 /*===================*\
 ||   Media Queries   ||
@@ -44,6 +52,14 @@ $break-landscape-tablet: 1048px;
         @media only screen and (orientation: landscape) and (max-width: $break-landscape-mobile) {
             @content;
         }
+    } @else if $media == mobile-landscape {
+        @media only screen and (orientation: landscape) and (max-width: $break-landscape-mobile) {
+            @content;
+        }
+    } @else if $media == mobile-portrait {
+        @media only screen and (orientation: portrait) and (max-width: $break-mobile) {
+            @content;
+        }
     } @else if $media == not-mobile {
         @media only screen and (orientation: portrait) and (min-width: $break-mobile + 1) {
             @content;
@@ -52,6 +68,17 @@ $break-landscape-tablet: 1048px;
             @content;
         }
     } @else if $media == tablet {
+        @media only screen and (orientation: portrait) and (min-width: $break-mobile + 1) and (max-width: $break-tablet) {
+            @content;
+        }
+        @media only screen and (orientation: landscape) and (min-width: $break-landscape-mobile + 1) and (max-width: $break-landscape-tablet) {
+            @content;
+        }
+    } @else if $media == tablet-landscape {
+        @media only screen and (orientation: landscape) and (min-width: $break-landscape-mobile + 1) and (max-width: $break-landscape-tablet) {
+            @content;
+        }
+    } @else if $media == tablet-portrait {
         @media only screen and (orientation: portrait) and (min-width: $break-mobile + 1) and (max-width: $break-tablet) {
             @content;
         }
@@ -70,6 +97,22 @@ $break-landscape-tablet: 1048px;
             @content;
         }
         @media only screen and (orientation: landscape) and (min-width: $break-landscape-tablet) {
+            @content;
+        }
+    } @else if $media == desktop-landscape {
+        @media only screen and (orientation: landscape) and (min-width: $break-landscape-tablet) {
+            @content;
+        }
+    } @else if $media == desktop-portrait {
+        @media only screen and (orientation: portrait) and (min-width: $break-tablet) {
+            @content;
+        }
+    } @else if $media == landscape {
+        @media only screen and (orientation: landscape) {
+            @content;
+        }
+    } @else if $media == portrait {
+        @media only screen and (orientation: portrait) {
             @content;
         }
     }

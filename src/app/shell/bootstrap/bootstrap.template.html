@@ -1,0 +1,38 @@
+<!--
+@Author: Alex Sorafumo <alex.sorafumo>
+@Date:   11/01/2017 11:49 AM
+@Email:  alex@yuion.net
+@Filename: bootstrap.template.html
+@Last modified by:   Alex Sorafumo
+@Last modified time: 31/01/2017 11:11 AM
+-->
+
+<div class="bootstrap">
+    <div class="loading center" *ngIf="!setup">
+        <div class="bounce" style="position: absolute;top: 50%;left: 50%;transform: translate(-50%, -50%);font-size: 0.5em;">
+            <div class="circle"><div class="inner"></div></div>
+        </div>
+    </div>
+    <div class="setup" *ngIf="setup">
+        <div class="setup-display">
+            <h1>ACA Starter UI Setup</h1>
+            <div class="manual-btn" *ngIf="(system_list && system_list.length > 0)">
+                <btn name="white" format="mini-action" (tapped)="select_sys = !select_sys"><i class="material-icons">build</i></btn>
+            </div>
+            <div class="manual" [style.display]="!select_sys ? '' : 'none'">
+                <div class="building">
+                    <p>Please enter the System ID below:</p>
+                    <input id="building" [(ngModel)]="sys_id" type="text" (keyup.enter)="configure()" placeholder="System ID" />
+                </div>
+            </div>
+            <div class="auto">
+            <div class="auto" [style.display]="select_sys?'':'none'">
+                <div class="building select">
+                    <p>Please select a system from the dropdown below:</p>
+                    <dropdown name="bootstrap" [list]="system_list" [model]="-1" [filter]="true" (modelChange)="selectSystem(system_list[$event])" placeholder="Select system"></dropdown>
+                </div>
+            </div>
+            <btn [disabled]="!sys_id" (tapped)="configure()">Finish Setup</btn>
+        </div>
+    </div>
+</div>
