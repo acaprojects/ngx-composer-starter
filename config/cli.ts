@@ -3,7 +3,6 @@ import { ng } from './ng';
 
 import * as packager from 'electron-packager';
 import * as gulp from 'gulp';
-import * as util from 'gulp-util';
 import * as install from 'gulp-install';
 import * as runSequence from 'run-sequence';
 import * as yargs from 'yargs';
@@ -11,8 +10,9 @@ import * as yargs from 'yargs';
 const argv = yargs.argv;
 
 const ngargs = [
-    argv.prod ? '--prod' : '',
-    argv.aot  ? '--aot'  : ''
+    argv.prod || (argv.demo === true && argv.prod !== 'false') ? '--prod' : '',
+    argv.aot || (argv.demo === true && argv.aot !== 'false')  ? '--aot'  : '',
+    argv.port ? `--port=${argv.port}`  : ''
 ];
 
 Dashboard.show(argv.prod ? 'prod' : 'dev');
@@ -21,9 +21,9 @@ gulp.task('build', (next) => runSequence('pre-build', 'ng:build', 'post-build', 
 
 gulp.task('serve', (next) => runSequence('pre-serve', 'ng:serve', next));
 
-gulp.task('ng:build', (next) => ng('build', ...ngargs));
+gulp.task('ng:build', () => ng('build', ...ngargs));
 
-gulp.task('ng:serve', (next) => ng('serve', ...ngargs));
+gulp.task('ng:serve', () => ng('serve', ...ngargs));
 
 gulp.task('package', (next) => runSequence('build', 'install', 'package-app', next));
 
