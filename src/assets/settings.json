@@ -19,5 +19,5 @@
         "logo_type": "img",
         "logo": "assets/img/logo.svg"
     },
-    "mock": true
+    "mock": false
 }

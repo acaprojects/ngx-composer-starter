@@ -7,19 +7,17 @@
  * @Last modified time: 03/02/2017 10:25 AM
  */
 
-import { Location } from '@angular/common';
-import { Inject, Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
+import { Router } from '@angular/router';
+import { BehaviorSubject } from 'rxjs';
 
-import { SystemsService, CommsService, OAuthService } from '@acaprojects/ngx-composer';
+import { SystemsService } from '@acaprojects/ngx-composer';
 import { OverlayService } from '@acaprojects/ngx-widgets';
 
 import { SettingsService } from './settings.service';
 import { Utils } from '../shared/utility.class';
 import { SwUpdate } from '@angular/service-worker';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class AppService {
@@ -36,11 +34,8 @@ export class AppService {
     constructor(private _title: Title,
         private version: SwUpdate,
         private router: Router,
-        private location: Location,
-        private route: ActivatedRoute,
         private overlay: OverlayService,
         private settings: SettingsService,
-        // private comms: CommsService
         private systems: SystemsService
     ) {
         this.overlay.registerService(this);
@@ -137,19 +132,59 @@ export class AppService {
         }
     }
 
+    /**
+     * Listen to changes of given property
+     * @param name Name of the property
+     * @param next Callback for changes to properties value
+     */
     public listen(name: string, next: (data: any) => void) {
         if (this.subjects[name]) {
             return this.observers[name].subscribe(next);
+        } else {
+                // Create new variable to store property's value
+            this.subjects[name] = new BehaviorSubject<any>(this[name] instanceof Function ? null : this[name]);
+            this.observers[name] = this.subjects[name].asObservable();
+                // Create raw getter and setter for property
+            if (!(this[name] instanceof Function)) {
+                Object.defineProperty(this, name, {
+                    get: () => this.get(name),
+                    set: (v: any) => this.set(name, v)
+                });
+            }
+            return this.observers[name].subscribe(next);
         }
-        return null;
     }
 
+    /**
+     * Get the current value of the given property
+     * @param name Name of the property
+     */
     public get(name: string) {
-        if (this.subjects[name]) {
-            return this.subjects[name].getValue();
-        }
-        return null;
+        return this.subjects[name] ? this.subjects[name].getValue() : null;
     }
+
+    /**
+     * Set the value of the given property
+     * @param name Name of the property
+     * @param value New value to assign to the property
+     */
+    public set(name: string, value: any) {
+        if (this.subjects[name]) {
+            this.subjects[name].next(value);
+        } else {
+                // Create new variable to store property's value
+            this.subjects[name] = new BehaviorSubject<any>(value);
+            this.observers[name] = this.subjects[name].asObservable();
+                // Create raw getter and setter for property
+            if (!(this[name] instanceof Function)) {
+                Object.defineProperty(this, name, {
+                    get: () => this.get(name),
+                    set: (v: any) => this.set(name, v)
+                });
+            }
+        }
+    }
+
 
     get Settings() { return this.settings; }
     get Overlay() { return this.overlay; }
